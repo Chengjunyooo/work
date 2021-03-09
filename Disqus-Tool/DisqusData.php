@@ -143,23 +143,34 @@
             )
             VALUES
                 (
-                    "{$this->post_id}",
-                    "{$comment_info->author->name}",
+                    %d,
+                    %s,
                     '***super@manualSync.com',
-                    "{$comment_info->author->url}",
+                    %s,
                     '***.***.***.007',
-                    "{$standerd_time }",
-                    "{$standerd_time}",
-                    "{$comment_info->raw_message}",
+                    %s,
+                    %s,
+                    %s,
                     0,
                     0,
                     'Disqus Sync Host',
                     'comment',
-                    {$parent_comment_id},
+                    %d,
                     0
                 )
             SQL;
-            $this->wpdb->query($sql_insert_2_comments);
+
+            $this->wpdb->query(
+                $this->wpdb->prepare($sql_insert_2_comments,
+                    (int)$this->post_id,
+                    $comment_info->author->name,
+                    $comment_info->author->url,
+                    $standerd_time,
+                    $standerd_time,
+                    $comment_info->raw_message,
+                    $parent_comment_id
+                )
+            );
             $comment_id = $this->wpdb->insert_id;
             $sql_insert_2_meta = <<<SQL
             INSERT INTO wp_commentmeta (
